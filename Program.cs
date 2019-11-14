@@ -22,19 +22,28 @@ namespace RobotBek
             public const int SOUTH = 3;
             public const int WEST  = 4;
             
-            private readonly Dictionary<int, string> VIEW = new Dictionary<int, string>() {
+            private static readonly Dictionary<int, string> VIEW = new Dictionary<int, string>() {
                 { NORTH, "▲" },
                 { EAST,  "►" },
                 { WEST,  "◄" },
                 { SOUTH, "▼" }
             };
 
-            public String View(int direction)
+            public static String View(int direction)
             {
                 return VIEW[direction];
             }
         }
-        public class Robot : Face
+
+        public class Game
+        {
+            public virtual void Run()
+            {
+
+            }
+        }
+
+        public class Robot : Game
         {
             // Constants
             const int DIRT = 1;
@@ -49,7 +58,7 @@ namespace RobotBek
                 board = new int[BOARD_DIMENSION, BOARD_DIMENSION];
 
                 // Robot default face is NORTH
-                currentFace = NORTH;
+                currentFace = Face.NORTH;
 
                 // Robot default position
                 currentPlaceX = 0;
@@ -62,7 +71,7 @@ namespace RobotBek
                 board = new int[BOARD_DIMENSION, BOARD_DIMENSION];
 
                 // Robot default face is NORTH
-                currentFace = NORTH;
+                currentFace = Face.NORTH;
 
                 // Robot default position
                 currentPlaceX = 0;
@@ -91,10 +100,10 @@ namespace RobotBek
 
             public void TurnRight()
             {
-                if (currentFace == WEST)
+                if (currentFace == Face.WEST)
                 {
-                    currentFace = NORTH;
-                } else if (currentFace < WEST)
+                    currentFace = Face.NORTH;
+                } else if (currentFace < Face.WEST)
                 {
                     currentFace += 1;
                 }
@@ -110,7 +119,7 @@ namespace RobotBek
                     {
                         if (i == currentPlaceX && currentPlaceY == j)
                         {
-                            Console.Write("{0}  ", View(currentFace));
+                            Console.Write("{0}  ", Face.View(currentFace));
                         } 
                         else
                         {
@@ -125,28 +134,28 @@ namespace RobotBek
             {
                 switch (currentFace)
                 {
-                    case NORTH:
+                    case Face.NORTH:
                         if (currentPlaceY > 0)
                             currentPlaceY -= 1;
                         else
                             throw new RobotMovementException("You can't go forward");
                         
                         break;
-                    case SOUTH:
+                    case Face.SOUTH:
                         if (currentPlaceY < BOARD_DIMENSION - 1)
                             currentPlaceY += 1;
                         else
                             throw new RobotMovementException("You can't go forward");
 
                         break;
-                    case WEST:
+                    case Face.WEST:
                         if (currentPlaceX > 0)
                             currentPlaceX -= 1;
                         else
                             throw new RobotMovementException("You can't go forward");
 
                         break;
-                    case EAST:
+                    case Face.EAST:
                         if (currentPlaceX < BOARD_DIMENSION - 1)
                             currentPlaceX += 1;
                         else
@@ -168,41 +177,50 @@ namespace RobotBek
                 board[x, y] = DIRT;
             }
 
-
-        }
-
-        public class Game
-        {
-            private readonly Robot robot;
-
-            public Game()
+            // Stop robot when the all the cells are clean
+            public bool IsOver()
             {
-                robot = new Robot();
+                int total = 0;
+                for (int i = 0; i < BOARD_DIMENSION; i++)
+                    for (int j = 0; j < BOARD_DIMENSION; j++)
+                        if (board[i, j] != DIRT)
+                            total++;
+
+                return total == BOARD_DIMENSION * BOARD_DIMENSION;
             }
 
-            public void Run()
+            public override void Run()
             {
-                try
+                while(true)
                 {
-                    robot.Inn(1, 1);
-                    robot.Show();
-                } 
-                catch(RobotMovementException ex)
-                {
-                    Console.WriteLine(ex);
+                    try
+                    {
+                        // TODO IMPLEMENT RUN PROGRAM
+                    } 
+                    catch(IndexOutOfRangeException ex)
+                    {
+                        Console.WriteLine(ex);
+                    } 
+                    catch(RobotMovementException ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
                 }
-                catch(IndexOutOfRangeException ex)
-                {
-                    Console.WriteLine(ex);
-                }
-                
             }
         }
-
         static void Main(string[] args)
         {
-            Game game = new Game();
+            Game game = new Robot();
             game.Run();
+
+     
+
+            Console.WriteLine("1. Dirt");
+            Console.WriteLine("2. IN");
+            Console.WriteLine("3. Facing");
+            Console.WriteLine("4. MoveForward");
+            Console.WriteLine("5. TurnRight");
+            Console.WriteLine("6. CleanCell");
         }
     }
 }
