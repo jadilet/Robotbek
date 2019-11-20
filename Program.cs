@@ -65,6 +65,14 @@ namespace RobotBek
                 currentPlaceY = 0;
             }
 
+            void Facing(int face)
+            {
+               if (face >= Face.NORTH && face <= Face.WEST)
+                {
+                    currentFace = face;
+                }
+            }
+
             public Robot(int dimension)
             {
                 BOARD_DIMENSION = dimension;
@@ -112,7 +120,7 @@ namespace RobotBek
             public void Show()
             {
                 Console.OutputEncoding = System.Text.Encoding.UTF8;
-
+                Console.WriteLine("");
                 for (int i = 0; i < BOARD_DIMENSION; i++)
                 {
                     for (int j = 0; j < BOARD_DIMENSION;j++)
@@ -128,6 +136,7 @@ namespace RobotBek
                     }
                     Console.WriteLine();
                 }
+                Console.WriteLine();
             }
 
             public void MoveForward()
@@ -135,29 +144,29 @@ namespace RobotBek
                 switch (currentFace)
                 {
                     case Face.NORTH:
-                        if (currentPlaceY > 0)
-                            currentPlaceY -= 1;
+                        if (currentPlaceX > 0)
+                            currentPlaceX -= 1;
                         else
                             throw new RobotMovementException("You can't go forward");
                         
                         break;
                     case Face.SOUTH:
-                        if (currentPlaceY < BOARD_DIMENSION - 1)
-                            currentPlaceY += 1;
+                        if (currentPlaceX < BOARD_DIMENSION - 1)
+                            currentPlaceX += 1;
                         else
                             throw new RobotMovementException("You can't go forward");
 
                         break;
                     case Face.WEST:
-                        if (currentPlaceX > 0)
-                            currentPlaceX -= 1;
+                        if (currentPlaceY > 0)
+                            currentPlaceY -= 1;
                         else
                             throw new RobotMovementException("You can't go forward");
 
                         break;
                     case Face.EAST:
-                        if (currentPlaceX < BOARD_DIMENSION - 1)
-                            currentPlaceX += 1;
+                        if (currentPlaceY < BOARD_DIMENSION - 1)
+                            currentPlaceY += 1;
                         else
                             throw new RobotMovementException("You can't go forward");
 
@@ -191,11 +200,68 @@ namespace RobotBek
 
             public override void Run()
             {
+                int com, x, y;
+                Show();
                 while(true)
                 {
                     try
                     {
-                        // TODO IMPLEMENT RUN PROGRAM
+                        Console.WriteLine("Please choose following commands: ");
+                        Console.WriteLine("1. Dirt");
+                        Console.WriteLine("2. IN");
+                        Console.WriteLine("3. Facing");
+                        Console.WriteLine("4. MoveForward");
+                        Console.WriteLine("5. TurnRight");
+                        Console.WriteLine("6. CleanCell");
+                        Console.WriteLine("");
+
+                        com = Convert.ToInt32(Console.ReadLine());
+
+                        switch (com)
+                        {
+                            case 1:
+                                Console.WriteLine("X: ");
+                                x = Convert.ToInt32(Console.ReadLine());
+                                Console.WriteLine("Y: ");
+                                y = Convert.ToInt32(Console.ReadLine());
+                                Dirt(x, y);
+                                Show();
+                                break;
+                            case 2:
+                                Console.WriteLine("X: ");
+                                x = Convert.ToInt32(Console.ReadLine());
+                                Console.WriteLine("Y: ");
+                                y = Convert.ToInt32(Console.ReadLine());
+                                Inn(x, y);
+                                Show();
+                                break;
+                            case 3:
+                                Console.WriteLine("Please choose following direction: ");
+                                Console.WriteLine("{0} North\n{1} East\n{2} South\n{3} West", 
+                                    Face.NORTH, Face.EAST, Face.SOUTH, Face.WEST);
+                                x = Convert.ToInt32(Console.ReadLine());
+                                Facing(x);
+                                Show();
+                                break;
+                            case 4:
+                                MoveForward();
+                                Show();
+                                break;
+                            case 5:
+                                TurnRight();
+                                Show();
+                                break;
+                            case 6:
+                                CleanCell();
+                                Show();
+                                
+                                if (IsOver()) return;
+
+                                break;
+                            default:
+                                Console.WriteLine("Please choose the right command!");
+                                break;
+                        }
                     } 
                     catch(IndexOutOfRangeException ex)
                     {
@@ -212,15 +278,6 @@ namespace RobotBek
         {
             Game game = new Robot();
             game.Run();
-
-     
-
-            Console.WriteLine("1. Dirt");
-            Console.WriteLine("2. IN");
-            Console.WriteLine("3. Facing");
-            Console.WriteLine("4. MoveForward");
-            Console.WriteLine("5. TurnRight");
-            Console.WriteLine("6. CleanCell");
         }
     }
 }
